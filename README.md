@@ -1,5 +1,8 @@
 # monitor-manager
 
+## [Live Demo](https://is5pz3.github.io/monitor-manager/)
+
+
 ## Project setup
 ```
 npm install
