@@ -48,7 +48,7 @@
               <v-layout v-for="(measure) in item.data" :key="measure.timestamp">
                 <v-flex lg6>{{measure.value}}</v-flex>
                 <v-spacer></v-spacer>
-                <v-flex lg4>{{measure.timestamp}}</v-flex>
+                <v-flex lg4>{{measure.timestamp | moment("HH:mm:ss -- D-MM-YYYY ")}}</v-flex>
               </v-layout>
             </v-card>
           </v-expansion-panel-content>
@@ -59,6 +59,9 @@
 </template>
 
 <script>
+import Vue from 'vue';
+Vue.use(require('vue-moment'));
+
 export default {
   props: {
     sensor: {
