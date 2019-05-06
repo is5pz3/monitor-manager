@@ -1,0 +1,25 @@
+sudo: required
+language: node_js
+services:
+  - docker
+node_js:
+  - '10'
+
+before_install: 
+  - wget -qO- https://toolbelt.heroku.com/install.sh | sh 
+  - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+
+install: 
+  - yarn install 
+
+script:
+  - node --version
+#  - yarn test 
+
+deploy: 
+  provider: script 
+  script: 
+    heroku container:push web --app monitor-manager-prod;
+    heroku container:release web --app monitor-manager-prod;
+  on: 
+    branch: master
