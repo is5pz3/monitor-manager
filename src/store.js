@@ -13,12 +13,38 @@ export default new Vuex.Store({
           {
             metric: 'Cpu usage',
             unit: '%',
-            timestamp: 'Unix Timestamp'
+            timestamp: 'Unix Timestamp',
+            data: [
+              {value: 10.0, timestamp: 1557124450},
+              {value: 20.0, timestamp: 1557124451},
+              {value: 25.0, timestamp: 1557124452},
+              {value: 45.0, timestamp: 1557124453},
+              {value: 20.0, timestamp: 1557124454},
+              {value: 34.0, timestamp: 1557124455},
+              {value: 67.0, timestamp: 1557124456},
+              {value: 71.0, timestamp: 1557124457},
+              {value: 72.0, timestamp: 1557124458},
+              {value: 73.0, timestamp: 1557124459},
+              {value: 64.0, timestamp: 1557124460},
+            ]
           },
           {
             metric: 'Ram usage',
             unit: '%',
-            timestamp: 'Unix Timestamp'
+            timestamp: 'Unix Timestamp',
+            data: [
+              {value: 10.0, timestamp: 1557124450},
+              {value: 20.0, timestamp: 1557124451},
+              {value: 25.0, timestamp: 1557124452},
+              {value: 45.0, timestamp: 1557124453},
+              {value: 20.0, timestamp: 1557124454},
+              {value: 34.0, timestamp: 1557124455},
+              {value: 67.0, timestamp: 1557124456},
+              {value: 71.0, timestamp: 1557124457},
+              {value: 72.0, timestamp: 1557124458},
+              {value: 73.0, timestamp: 1557124459},
+              {value: 64.0, timestamp: 1557124460},
+            ]
           }
         ]
       },
@@ -29,7 +55,20 @@ export default new Vuex.Store({
           {
             metric: 'Cpu usage',
             unit: '%',
-            timestamp: 'Unix Timestamp'
+            timestamp: 'Unix Timestamp',
+            data: [
+              {value: 10.0, timestamp: 1557124450},
+              {value: 20.0, timestamp: 1557124451},
+              {value: 25.0, timestamp: 1557124452},
+              {value: 45.0, timestamp: 1557124453},
+              {value: 20.0, timestamp: 1557124454},
+              {value: 34.0, timestamp: 1557124455},
+              {value: 67.0, timestamp: 1557124456},
+              {value: 71.0, timestamp: 1557124457},
+              {value: 72.0, timestamp: 1557124458},
+              {value: 73.0, timestamp: 1557124459},
+              {value: 64.0, timestamp: 1557124460},
+            ]
           },
         ]
       },
@@ -40,7 +79,20 @@ export default new Vuex.Store({
           {
             metric: 'Ram usage',
             unit: '%',
-            timestamp: 'Unix Timestamp'
+            timestamp: 'Unix Timestamp',
+            data: [
+              {value: 10.0, timestamp: 1557124450},
+              {value: 20.0, timestamp: 1557124451},
+              {value: 25.0, timestamp: 1557124452},
+              {value: 45.0, timestamp: 1557124453},
+              {value: 20.0, timestamp: 1557124454},
+              {value: 34.0, timestamp: 1557124455},
+              {value: 67.0, timestamp: 1557124456},
+              {value: 71.0, timestamp: 1557124457},
+              {value: 72.0, timestamp: 1557124458},
+              {value: 73.0, timestamp: 1557124459},
+              {value: 64.0, timestamp: 1557124460},
+            ]
           }
         ]
       },
