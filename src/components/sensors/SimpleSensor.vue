@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-card class="ma-1 text-md-center align-center" min-width="700px">
+    <v-card class="ma-1 text-md-center align-center" min-width="800px">
       <v-toolbar color="primary" dark>
         <v-toolbar-title>{{sensorDisplay.sensor_id}}</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -40,6 +40,7 @@
               </v-flex>
             </template>
             <v-card class="text-md-center align-center">
+              <v-divider></v-divider>
               <v-subheader>
                 <v-flex lg6>Value</v-flex>
                 <v-spacer></v-spacer>
@@ -48,34 +49,44 @@
               <v-layout v-for="(measure) in item.data" :key="measure.timestamp">
                 <v-flex lg6>{{measure.value}}</v-flex>
                 <v-spacer></v-spacer>
-                <v-flex lg4>{{measure.timestamp | moment("HH:mm:ss -- D-MM-YYYY ")}}</v-flex>
+                <v-flex lg4>{{measure.timestamp | moment("HH:mm:ss DD-MM-YYYY")}}</v-flex>
               </v-layout>
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
+
+        <simple-line-chart :chart-data="{datasets: prepareDataForChart(sensorDisplay.metrics)}" ></simple-line-chart>
       </v-container>
     </v-card>
   </v-layout>
 </template>
 
 <script>
-import Vue from 'vue';
-Vue.use(require('vue-moment'));
+import Vue from "vue";
+Vue.use(require("vue-moment"));
+
+import SimpleLineChart from "@/components/charts/SimpleLineChart.vue";
+import { mapGetters } from "vuex";
 
 export default {
+  components: { SimpleLineChart },
   props: {
     sensor: {
       type: Object,
-      required: true
+      required: false
     }
   },
   data() {
     return {
-      visible: false
+      visible: false,
     };
   },
 
   computed: {
+    ...mapGetters({
+      getBorderColorByMetricName: "getBorderColorByMetricName",
+      getBackgroundColorByMetricName: "getBackgroundColorByMetricName"
+    }),
     sensorDisplay() {
       return this.sensor;
     }
@@ -84,6 +95,29 @@ export default {
   methods: {
     changeVisiblity() {
       this.visible = !this.visible;
+    },
+
+    prepareDataForChart(metrics) {
+      var datasets = [];
+
+      metrics.forEach(element => {
+        var data = [];
+
+        element.data.forEach(meassure => {
+          data.push({
+            y: meassure.value,
+            t: meassure.timestamp * 1000
+          });
+        });
+
+        datasets.push({
+          label: element.metric,
+          data: data,
+          borderColor: this.getBorderColorByMetricName(element.metric),
+          backgroundColor: this.getBackgroundColorByMetricName(element.metric)
+        });
+      });
+      return datasets;
     }
   }
 };
