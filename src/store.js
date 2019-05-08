@@ -138,6 +138,7 @@ const moduleMock = {
 
 export default new Vuex.Store({
   state: {
+    limit: 20,
     colors: [
       {
         metricName: "CpuUsage",
@@ -190,6 +191,10 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    setLimit: (state, payload) => {
+      state.limit = payload.limit
+    },
+
     setMeasurments: (state, payload) => {
       state.measurements = payload
     },
@@ -216,7 +221,7 @@ export default new Vuex.Store({
     },
 
     fetchMeasurementsData: (context, payload) => {
-      const url = "/measurements/" + payload.sensor_id
+      const url = "/measurements/" + payload.sensor_id + "?limit=" + context.state.limit
       AxiosModule.get(url)
         .then(response => {
           var responseData = {

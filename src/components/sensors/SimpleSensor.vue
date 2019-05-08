@@ -11,11 +11,11 @@
       </v-toolbar>
       <v-container v-if="visible">
         <v-layout row class="pa-2">
-          <v-flex lg6>
+          <v-flex>
             <div class="caption grey--text">Platform</div>
             <div>{{sensorDisplay.platform}}</div>
           </v-flex>
-          <v-flex lg6>
+          <v-flex>
             <div class="caption grey--text">Host Name</div>
             <div>{{sensorDisplay.host_name}}</div>
           </v-flex>
@@ -24,12 +24,12 @@
         <v-expansion-panel flat>
           <v-expansion-panel-content class="pa-2">
             <template v-slot:header>
-              <v-flex lg6>
+              <v-flex>
                 <div class="caption grey--text">Metric</div>
                 <div>{{sensorDisplay.metric}}</div>
               </v-flex>
 
-              <v-flex lg2>
+              <v-flex>
                 <div class="caption grey--text">Unit</div>
                 <div>{{sensorDisplay.unit}}</div>
               </v-flex>
