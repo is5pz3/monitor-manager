@@ -1,7 +1,10 @@
 <template>
   <v-container class="my-5">
     <v-layout column fill-height align-center justify-start>
-      <v-flex v-for="(item, index) in getMeasurements" :key="index" xs12 md6 lg12>
+      <v-flex>
+        <v-text-field v-model="searchHostname" label="Hostnames" placeholder="Search by host name" outline></v-text-field>
+      </v-flex>
+      <v-flex v-for="(item, index) in filteredSensors" :key="index" xs12 md6 lg12>
         <SimpleSensor :sensor="item"/>
       </v-flex>
     </v-layout>
@@ -20,13 +23,20 @@ export default {
   data() {
     return {
       loading: true,
+      searchHostname: "",
       timer: ""
     };
   },
   computed: {
     ...mapGetters({
       getMeasurements: "getMeasurements"
-    })
+    }),
+
+    filteredSensors() {
+      return this.getMeasurements.filter(item => {
+        return item.host_name.match(this.searchHostname)
+      })
+    }
   },
   methods: {
     fetchMeasurementsData() {

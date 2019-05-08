@@ -20,10 +20,19 @@ export default {
                 tooltipFormat: "DD/MM/YYYY HH:mm:ss"
               }
             }
+          ],
+          yAxes: [
+            {
+              type: "linear",
+              ticks: {
+                min: 0,
+                max: 100
+              }
+            }
           ]
         }
       }
-    }
+    };
   },
   mounted() {
     this.renderChart(this.chartData, this.options);
