@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import AxiosModule from "@/AxiosModule.js"
-
+import axios from 'axios'
+import router from './router'
 Vue.use(Vuex);
 
 const moduleMock = {
@@ -139,6 +140,9 @@ const moduleMock = {
 export default new Vuex.Store({
   state: {
     limit: 20,
+    status: '',
+    token: localStorage.getItem('token') || '',
+    login : {},
     colors: [
       {
         metricName: "CpuUsage",
@@ -178,6 +182,8 @@ export default new Vuex.Store({
     ],
   },
   getters: {
+    isLoggedIn: state => !!state.token,
+    authStatus: state => state.status,
     getMeasurements: (state) => {
       return state.measurements
     },
@@ -191,6 +197,22 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    auth_request(state){
+      state.status = 'loading'
+    },
+    auth_success(state, token, login){
+      state.status = 'success'
+      state.token = token
+      state.login = login
+    },
+    auth_error(state){
+      state.status = 'error'
+    },
+    logout(state){
+      state.status = ''
+      state.token = ''
+    },
+
     setLimit: (state, payload) => {
       state.limit = payload.limit
     },
@@ -207,7 +229,90 @@ export default new Vuex.Store({
 
   },
   actions: {
-
+    doLogin({ commit }, loginData) {
+      axios.post('https://reqres.in/api/login', {
+        ...loginData
+      })
+      .then((response) => {
+        const token = response.data.token
+        const login = response.data.login
+        localStorage.setItem('token', token)
+        axios.defaults.headers.common['Authorization'] = token
+        commit('auth_success', token, login)
+        router.push('/');
+        //resolve(response)
+        console.log(response)
+      })
+      .catch(error => {
+        commit('auth_error')
+        localStorage.removeItem('token')
+        console.log(error.status)
+      })
+    },
+    doRegister({ commit }, loginData) {
+      axios.post('https://reqres.in/api/register', {
+        ...loginData
+      })
+      .then((response) => {
+        const token = response.data.token
+        const login = response.data.login
+        localStorage.setItem('token', token)
+        axios.defaults.headers.common['Authorization'] = token
+        commit('auth_success', token, login)
+        console.log(login)
+        router.push('/login');
+        //resolve(response)
+        console.log(response)
+      })
+      .catch(error => {
+        commit('auth_error')
+        localStorage.removeItem('token')
+        console.log(error)
+      })
+    },
+    //temp
+    /*login: (context, payload) => {
+      const url = "/users"
+      AxiosModule.post(url)
+        .then(response => {
+          const token = response.data.token
+          const login = response.data.login
+          localStorage.setItem('token', token)
+          axios.defaults.headers.common['Authorization'] = token
+          context.commit('auth_success', token, login)
+          console.log(response)
+        })
+        .catch(error => {
+          context.commit('auth_error')
+          localStorage.removeItem('token')
+          console.log(error)
+        })
+    },
+    register: (context, payload) => {
+      const url = "https://reqres.in/api/register"
+      AxiosModule.post(url)
+        .then(response => {
+          const token = resp.data.token
+          const login = resp.data.login
+          localStorage.setItem('token', token)
+          axios.defaults.headers.common['Authorization'] = token
+          context.commit('auth_success', token, login)
+          console.log(response)
+        })
+        .catch(error => {
+          context.commit('auth_error')
+          localStorage.removeItem('token')
+          console.log(error)
+        })
+    },*/
+    logout({commit}){
+      return new Promise((resolve, reject) => {
+          commit('logout')
+          localStorage.removeItem('token')
+          delete axios.defaults.headers.common['Authorization']
+          resolve()
+      })
+    },
     fetchMeasurements: (context, payload) => {
       const url = "/measurements"
       AxiosModule.get(url)
