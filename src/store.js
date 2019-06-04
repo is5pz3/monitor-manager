@@ -197,7 +197,11 @@ export default new Vuex.Store({
   },
   mutations: {
     setLimit: (state, payload) => {
-      state.limit = payload.limit
+      if (payload.limit > 0) {
+        state.limit = payload.limit
+      } else {
+        state.limit = 20
+      }
     },
 
     setMeasurments: (state, payload) => {
