@@ -248,6 +248,15 @@ export default new Vuex.Store({
       const url = "/measurements"
 
       console.log(payload)
+    },
+
+    fetchHistoryMeasurements: (context, payload) => {
+      const url = "/measurements/"+payload.sensor_id
+      +"?data_count="+payload.data_count
+      +"&since="+payload.since
+      +"&to="+payload.to
+
+      console.log(url)
     }
 
   },

@@ -2,12 +2,16 @@
   <v-container class="my-5">
     <v-card>
       <v-layout row wrap justify-center align-center>
-        <v-flex md5 class="pa-3">
-          <v-select label="Select Host"></v-select>
+        <v-flex md10 class="pa-3">
+          <v-select v-model="selectedSensor" :items="getAllSensors" label="Select Sensor"></v-select>
         </v-flex>
-        <v-spacer></v-spacer>
-        <v-flex md5 class="pa-3">
-          <v-select label="Select Metric"></v-select>
+        <v-flex md2 class="pa-3">
+                    <v-text-field
+            label="Data count"
+            outline
+            mask="#####"
+            v-model="data_count"
+          ></v-text-field>
         </v-flex>
 
         <v-container md12 class="pa-3">
@@ -139,53 +143,98 @@
             </v-flex>
           </v-layout>
         </v-container>
-        <v-flex md12>
-          <v-btn flat color="primary">Search</v-btn>
-        </v-flex>
+        <v-layout row>
+          <v-flex md1>
+            <v-btn @click="getNewHistoryMeasurements()" flat color="primary">Search</v-btn>
+          </v-flex>
+          <v-flex md1 :class="{ errorTime: isError, acceptTime: !isError }">
+            <br>
+            {{msg}}
+          </v-flex>
+        </v-layout>
       </v-layout>
-
-
     </v-card>
   </v-container>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
-
-
   data() {
     return {
       menu: [false, false, false, false],
       fromDate: null,
       fromTime: null,
       toDate: null,
-      toTime: null
-    }
+      toTime: null,
+      selectedSensor: null,
+      data_count: null,
+      isError: false,
+      msg: ""
+    };
+  },
+  computed: {
+    ...mapGetters({
+      getAllSensors: "getAllSensors"
+    })
   },
 
   methods: {
     parseDateTimeToTimestamp(part) {
-      var date = null
-      var time = null
+      var date = null;
+      var time = null;
 
-      if(part == "from"){
-        date = this.fromDate
-        time = this.fromTime
+      if (part == "from") {
+        date = this.fromDate;
+        time = this.fromTime;
       }
-      if(part == "to"){
-        date = this.toDate
-        time = this.toDate
+      if (part == "to") {
+        date = this.toDate;
+        time = this.toTime;
       }
 
-      var dateParts = date.split("-")
-      var timeParts = time.split(":")
+      var dateParts = date.split("-");
+      var timeParts = time.split(":");
 
-      date = new Date(dateParts[0], parseInt(dateParts[1], 10) - 1, dateParts[2], timeParts[0], timeParts[1]);
-      console.log(date.getTime()/1000)
+      date = new Date(
+        dateParts[0],
+        parseInt(dateParts[1], 10) - 1,
+        dateParts[2],
+        timeParts[0],
+        timeParts[1]
+      );
+      var timestamp = date.getTime() / 1000;
+      return timestamp;
+    },
+
+    getNewHistoryMeasurements() {
+      var from = this.parseDateTimeToTimestamp("from");
+      var to = this.parseDateTimeToTimestamp("to");
+      if (to - from > 0) {
+        this.msg = "Ok";
+        this.isError = false;
+
+        var payload = {
+          sensor_id: this.selectedSensor,
+          data_count: this.data_count,
+          since: from,
+          to: to
+        }
+        this.$store.dispatch("fetchHistoryMeasurements",payload)
+      } else {
+        this.msg = "Bad time window";
+        this.isError = true;
+      }
     }
   }
 };
 </script>
 
 <style>
+.errorTime {
+  color: red;
+}
+.acceptTime {
+  color: green;
+}
 </style>
