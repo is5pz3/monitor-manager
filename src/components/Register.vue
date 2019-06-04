@@ -23,7 +23,14 @@
                     :error-messages="passwordMatchError"
                     required
                 ></v-text-field> 
-                 <p v-if="errorMessage">{{errorMessage}}</p>
+                <v-alert class="mx-5"
+      :value="errorMessage"
+      color="error"
+      icon="warning"
+      outline
+    >
+      {{errorMessage}}
+    </v-alert>
                 <v-flex  text-xs-right class="mx-5 pa-5">        
                 <v-btn
                     color="primary"
