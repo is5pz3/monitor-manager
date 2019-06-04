@@ -52,7 +52,6 @@
     },
     computed: {
       ...mapState([
-        'loggingIn',
         'errorMessage'
       ])
     },

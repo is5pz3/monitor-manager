@@ -34,6 +34,7 @@
                 <v-flex  text-xs-right class="mx-5 pa-5">        
                 <v-btn
                     color="primary"
+                    :disabled="passwordMatchErrorFlag"
                     @click="register()"
                 >Sign Up</v-btn>
                 <v-btn to="/login">Cancel</v-btn>
@@ -59,11 +60,13 @@ export default {
     },
    computed: {
       ...mapState([
-        'loggingIn',
         'errorMessage'
       ]),
       passwordMatchError () { 
           return (this.password === this.confirmPassword) ? '' : 'Passwords must match'
+      },
+      passwordMatchErrorFlag () { 
+          return (this.password !== this.confirmPassword || this.confirmPassword ===null) ? true : false
       },
       passwordRequired () { 
           return (this.password != '') ? '' : 'Passwords must match'
