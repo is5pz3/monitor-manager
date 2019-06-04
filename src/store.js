@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import AxiosModule from "@/AxiosModule.js"
-
+import axios from 'axios'
+import router from './router'
 Vue.use(Vuex);
 
 const moduleMock = {
@@ -139,6 +140,10 @@ const moduleMock = {
 export default new Vuex.Store({
   state: {
     limit: 20,
+    status: '',
+    token: localStorage.getItem('token') || '',
+    login : {},
+    errorMessage: null,
     colors: [
       {
         metricName: "CpuUsage",
@@ -178,6 +183,9 @@ export default new Vuex.Store({
     ],
   },
   getters: {
+    isLoggedIn: state => !!state.token,
+    authStatus: state => state.status,
+    getToken: state => state.token,
     getMeasurements: (state) => {
       return state.measurements
     },
@@ -191,6 +199,23 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    auth_request(state){
+      state.status = 'loading'
+    },
+    auth_success(state, token, login){
+      state.status = 'success'
+      state.token = token
+      state.login = login
+    },
+    auth_error(state,errorMessage){
+      state.status = 'error',
+      state.errorMessage = errorMessage
+    },
+    logout(state){
+      state.status = ''
+      state.token = ''
+    },
+
     setLimit: (state, payload) => {
       state.limit = payload.limit
     },
@@ -207,7 +232,55 @@ export default new Vuex.Store({
 
   },
   actions: {
-
+    doLogin({ commit }, loginData) {
+      axios.post('https://auth-prodd.herokuapp.com/users/login/', {
+        ...loginData
+      })
+      .then((response) => {
+        const token = response.data.token
+        const login = response.data.login
+        localStorage.setItem('token', token)
+        axios.defaults.headers.common['Authorization'] = token
+        commit('auth_success', token, login)
+        router.push('/');
+        //resolve(response)
+        console.log(response)
+      })
+      .catch(error => {
+        const errorMessage = error.response.data.message
+        commit('auth_error', errorMessage)
+        localStorage.removeItem('token')
+      })
+    },
+    doRegister({ commit }, registerData) {
+      axios.post('https://auth-prodd.herokuapp.com/users/register', {
+        ...registerData
+      })
+      .then((response) => {
+        const token = response.data.token
+        const login = response.data.login
+        const status = response.data.status
+        localStorage.setItem('token', token)
+        axios.defaults.headers.common['Authorization'] = token
+        commit('auth_success', token, login)
+        console.log(login)
+        router.push('/login');cg
+        console.log(status)
+      })
+      .catch((error) => {
+        const errorMessage = error.response.data.message
+        commit('auth_error', errorMessage)
+        localStorage.removeItem('token')
+      })
+    },
+    logout({commit}){
+      return new Promise((resolve, reject) => {
+          commit('logout')
+          localStorage.removeItem('token')
+          delete axios.defaults.headers.common['Authorization']
+          resolve();
+      })
+    },
     fetchMeasurements: (context, payload) => {
       const url = "/measurements"
       AxiosModule.get(url)
