@@ -189,6 +189,11 @@ export default new Vuex.Store({
     getBackgroundColorByMetricName: (state) => {
       return (payload) => state.colors.find(item => item.metricName === payload).backgroundColor
     },
+
+    getAllSensors: (state) => {
+      const uniqeSensors = [...new Set(state.measurements.map(m => m.sensor_id))];
+      return uniqeSensors
+    }
   },
   mutations: {
     setLimit: (state, payload) => {
@@ -233,6 +238,12 @@ export default new Vuex.Store({
         .catch(error => {
           console.log(error)
         })
+    },
+
+    saveNewCompositeMeasure: (context, payload) => {
+      const url = "/measurements"
+
+      console.log(payload)
     }
 
   },
