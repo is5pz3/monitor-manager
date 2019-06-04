@@ -143,6 +143,7 @@ export default new Vuex.Store({
     status: '',
     token: localStorage.getItem('token') || '',
     login : {},
+    errorMessage: null,
     colors: [
       {
         metricName: "CpuUsage",
@@ -184,6 +185,7 @@ export default new Vuex.Store({
   getters: {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
+    getToken: state => state.token,
     getMeasurements: (state) => {
       return state.measurements
     },
@@ -205,8 +207,9 @@ export default new Vuex.Store({
       state.token = token
       state.login = login
     },
-    auth_error(state){
-      state.status = 'error'
+    auth_error(state,errorMessage){
+      state.status = 'error',
+      state.errorMessage = errorMessage
     },
     logout(state){
       state.status = ''
@@ -230,7 +233,7 @@ export default new Vuex.Store({
   },
   actions: {
     doLogin({ commit }, loginData) {
-      axios.post('https://reqres.in/api/login', {
+      axios.post('https://auth-prodd.herokuapp.com/users/login/', {
         ...loginData
       })
       .then((response) => {
@@ -244,73 +247,38 @@ export default new Vuex.Store({
         console.log(response)
       })
       .catch(error => {
-        commit('auth_error')
+        const errorMessage = error.response.data.message
+        commit('auth_error', errorMessage)
         localStorage.removeItem('token')
-        console.log(error.status)
       })
     },
-    doRegister({ commit }, loginData) {
-      axios.post('https://reqres.in/api/register', {
-        ...loginData
+    doRegister({ commit }, registerData) {
+      axios.post('https://auth-prodd.herokuapp.com/users/register', {
+        ...registerData
       })
       .then((response) => {
         const token = response.data.token
         const login = response.data.login
+        const status = response.data.status
         localStorage.setItem('token', token)
         axios.defaults.headers.common['Authorization'] = token
         commit('auth_success', token, login)
         console.log(login)
-        router.push('/login');
-        //resolve(response)
-        console.log(response)
+        router.push('/login');cg
+        console.log(status)
       })
-      .catch(error => {
-        commit('auth_error')
+      .catch((error) => {
+        const errorMessage = error.response.data.message
+        commit('auth_error', errorMessage)
         localStorage.removeItem('token')
-        console.log(error)
       })
     },
-    //temp
-    /*login: (context, payload) => {
-      const url = "/users"
-      AxiosModule.post(url)
-        .then(response => {
-          const token = response.data.token
-          const login = response.data.login
-          localStorage.setItem('token', token)
-          axios.defaults.headers.common['Authorization'] = token
-          context.commit('auth_success', token, login)
-          console.log(response)
-        })
-        .catch(error => {
-          context.commit('auth_error')
-          localStorage.removeItem('token')
-          console.log(error)
-        })
-    },
-    register: (context, payload) => {
-      const url = "https://reqres.in/api/register"
-      AxiosModule.post(url)
-        .then(response => {
-          const token = resp.data.token
-          const login = resp.data.login
-          localStorage.setItem('token', token)
-          axios.defaults.headers.common['Authorization'] = token
-          context.commit('auth_success', token, login)
-          console.log(response)
-        })
-        .catch(error => {
-          context.commit('auth_error')
-          localStorage.removeItem('token')
-          console.log(error)
-        })
-    },*/
     logout({commit}){
       return new Promise((resolve, reject) => {
           commit('logout')
           localStorage.removeItem('token')
           delete axios.defaults.headers.common['Authorization']
-          resolve()
+          resolve();
       })
     },
     fetchMeasurements: (context, payload) => {
