@@ -23,6 +23,7 @@
                     :error-messages="passwordMatchError"
                     required
                 ></v-text-field> 
+                 <p v-if="errorMessage">{{errorMessage}}</p>
                 <v-flex  text-xs-right class="mx-5 pa-5">        
                 <v-btn
                     color="primary"
@@ -31,7 +32,6 @@
                 <v-btn to="/login">Cancel</v-btn>
                 </v-flex>
             </v-form>
-
         </v-card>
     </v-container>
 </template>
@@ -53,8 +53,7 @@ export default {
    computed: {
       ...mapState([
         'loggingIn',
-        'loginError',
-        'loginSuccessful'
+        'errorMessage'
       ]),
       passwordMatchError () { 
           return (this.password === this.confirmPassword) ? '' : 'Passwords must match'
@@ -69,7 +68,7 @@ export default {
       ]), 
       register() {
         this.doRegister({
-          email: this.login,
+          login: this.login,
           password: this.password
         });
       }

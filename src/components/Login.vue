@@ -16,6 +16,8 @@
                     type="password"
                     required
                 ></v-text-field>
+                <p v-if="errorMessage" color="red">{{errorMessage}}</p>
+                
                 <v-flex  text-xs-right class="mx-5 pa-5">
                 <v-btn
                     color="primary"
@@ -45,8 +47,7 @@
     computed: {
       ...mapState([
         'loggingIn',
-        'loginError',
-        'loginSuccessful'
+        'errorMessage'
       ])
     },
     methods: {
@@ -55,7 +56,7 @@
       ]),
       loginSubmit() {
         this.doLogin({
-          email: this.login,
+          login: this.login,
           password: this.password
         });
       }
