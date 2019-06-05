@@ -93,7 +93,6 @@ export default {
     },
 
     prepareDataForChart(sensorData) {
-      console.log(sensorData)
       var datasets = [];
 
       var data = [];

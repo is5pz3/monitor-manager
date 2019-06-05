@@ -211,7 +211,7 @@ export default new Vuex.Store({
           commit('auth_success', token, login)
           router.push('/');
           //resolve(response)
-          console.log(response.data.token)
+          // console.log(response.data.token)
         })
         .catch(error => {
           const errorMessage = error.response.data.message
@@ -230,7 +230,7 @@ export default new Vuex.Store({
           localStorage.setItem('token', token)
           axios.defaults.headers.common['Authorization'] = token
           commit('auth_success', token, login)
-          console.log(login)
+          // console.log(login)
           router.push('/login');
         })
         .catch((error) => {
@@ -298,7 +298,7 @@ export default new Vuex.Store({
           }
           context.commit("setCompositeMeasure", responseData);
           context.commit("add_message");
-          console.log(responseData)
+          // console.log(responseData)
         })
         .catch(error => {
           const errorMessage = error.response.data.message
@@ -315,7 +315,7 @@ export default new Vuex.Store({
             response: response
           }
           context.commit("delete_message", responseData);
-          console.log(responseData)
+          // console.log(responseData)
         })
         .catch(error => {
           const errorMessage = error.response.data.message
