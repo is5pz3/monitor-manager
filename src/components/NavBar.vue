@@ -3,12 +3,12 @@
     <v-toolbar app>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title class="text-uppercase">
-        <span class="font-weight-light">Monitor </span>
-        <span> Manager</span>
+        <span class="font-weight-light">Monitor</span>
+        <span>Manager</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="logged" flat>Logout</v-btn>
-      <v-btn v-else flat>Sign in</v-btn>
+      <v-btn v-if="isLoggedIn" @click="logout" flat>Logout</v-btn>
+      <v-btn v-else to="/login" flat>Sign in</v-btn>
     </v-toolbar>
 
     <v-navigation-drawer v-model="drawer" app class="primary text-uppercase">
@@ -37,9 +37,21 @@ export default {
         { title: "Search", icon: "search", route: "/search" },
         { title: "Charts", icon: "insert_chart_outlined", route: "/charts" },
         { title: "Composite Measure", icon: "create", route: "/composite" },
-        { title: "History", icon: "history", route: "/history" },
+        { title: "History", icon: "history", route: "/history" }
       ]
     };
+  },
+  computed: {
+    isLoggedIn: function() {
+      return this.$store.getters.isLoggedIn;
+    }
+  },
+  methods: {
+    logout: function() {
+      this.$store.dispatch("logout").then(() => {
+        this.$router.push("/login");
+      });
+    }
   }
 };
 </script>

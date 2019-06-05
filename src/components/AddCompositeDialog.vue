@@ -18,13 +18,7 @@
 
         <v-layout column class="pa-4">
           <v-flex>
-            <v-select label="Select Host"></v-select>
-          </v-flex>
-          <v-flex>
-            <v-select label="Select Sensor"></v-select>
-          </v-flex>
-          <v-flex>
-            <v-select label="Select Metric"></v-select>
+            <v-select v-model="selectedSensor" :items="getAllSensors" label="Select Sensor"></v-select>
           </v-flex>
 
           <v-flex>
@@ -38,19 +32,47 @@
           </v-flex>
 
         </v-layout>
+        <v-divider></v-divider>
+        <v-btn @click="addNewCompositeMeasure" flat color="primary">Save</v-btn>
+        <v-btn @click="dialog = false" flat>Cancel</v-btn>
       </v-card>
+      <p>{{errorMessage}}</p>
     </v-dialog>
   </div>
 </template>
 
 <script>
+import { mapGetters,mapState } from "vuex"
+
 export default {
   data() {
     return {
       dialog: false,
       lastMinute: 5,
-      everyMinute: 1
+      everyMinute: 1,
+      selectedSensor: ''
     };
+  },
+  computed: {
+    ...mapGetters({
+      getAllSensors: "getAllSensors",
+      getToken: "getToken"
+    }),
+    ...mapState(["errorMessage"]),
+  },
+
+  methods: {
+    addNewCompositeMeasure(){
+      var payload = {
+        sensor_id: this.selectedSensor,
+        time_window: this.lastMinute,
+        calculation_frequency: this.everyMinute,
+        token: this.getToken
+      }
+
+      this.$store.dispatch("saveNewCompositeMeasure", payload);
+      this.dialog.false;
+    }
   }
 };
 </script>
