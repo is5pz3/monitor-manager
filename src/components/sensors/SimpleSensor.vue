@@ -41,7 +41,7 @@
                 <v-spacer></v-spacer>
                 <v-flex lg4>Time</v-flex>
               </v-subheader>
-              <v-layout v-for="(measure) in sensorDisplay.data" :key="measure.timestamp">
+              <v-layout v-for="(measure) in sensorDisplay.data.measurements" :key="measure.timestamp">
                 <v-flex lg6>{{measure.value}}</v-flex>
                 <v-spacer></v-spacer>
                 <v-flex lg4>{{measure.timestamp | moment("HH:mm:ss DD-MM-YYYY")}}</v-flex>
@@ -96,7 +96,7 @@ export default {
       var datasets = [];
 
       var data = [];
-      sensorData.data.forEach(meassure => {
+      sensorData.data.measurements.forEach(meassure => {
         data.push({
           y: meassure.value,
           t: meassure.timestamp * 1000
