@@ -217,6 +217,10 @@ export default new Vuex.Store({
       state.status = 'error',
       state.errorMessage = errorMessage
     },
+    composite_measure_error(state,errorMessage){
+      state.status = 'error',
+      state.errorMessage = errorMessage
+    },
     logout(state){
       state.status = ''
       state.token = ''
@@ -347,6 +351,8 @@ export default new Vuex.Store({
           console.log(responseData)
         })
         .catch(error => {
+          const errorMessage = error.response.data.message
+          context.commit('composite_measure_error', errorMessage)
           console.log(error)
         })
     },

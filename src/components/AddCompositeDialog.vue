@@ -36,12 +36,13 @@
         <v-btn @click="addNewCompositeMeasure" flat color="primary">Save</v-btn>
         <v-btn @click="dialog = false" flat>Cancel</v-btn>
       </v-card>
+      <p>{{errorMessage}}</p>
     </v-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters,mapState } from "vuex"
 
 export default {
   data() {
@@ -56,7 +57,8 @@ export default {
     ...mapGetters({
       getAllSensors: "getAllSensors",
       getToken: "getToken"
-    })
+    }),
+    ...mapState(["errorMessage"]),
   },
 
   methods: {
@@ -68,7 +70,8 @@ export default {
         token: this.getToken
       }
 
-      this.$store.dispatch("saveNewCompositeMeasure", payload)
+      this.$store.dispatch("saveNewCompositeMeasure", payload);
+      this.dialog.false;
     }
   }
 };
