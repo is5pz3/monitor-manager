@@ -11,8 +11,9 @@ export default new Vuex.Store({
     limit: 20,
     status: '',
     token: localStorage.getItem('token') || '',
-    login : {},
+    login: {},
     errorMessage: null,
+    complexMeasurements: null,
     colors: [
       {
         metricName: "CpuUsage",
@@ -88,19 +89,19 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    auth_request(state){
+    auth_request(state) {
       state.status = 'loading'
     },
-    auth_success(state, token, login){
+    auth_success(state, token, login) {
       state.status = 'success'
       state.token = token
       state.login = login
     },
-    auth_error(state,errorMessage){
+    auth_error(state, errorMessage) {
       state.status = 'error',
-      state.errorMessage = errorMessage
+        state.errorMessage = errorMessage
     },
-    logout(state){
+    logout(state) {
       state.status = ''
       state.token = ''
     },
@@ -122,69 +123,73 @@ export default new Vuex.Store({
         Vue.set(state.measurements[sensorIndex], 'data', payload.response)
       }
     },
+
     setHistoryMeasurementInfo: (state, payload) => {
       state.historyMeasurement.id = payload.id,
-      state.historyMeasurement.platform = payload.platform,
-      state.historyMeasurement.metric = payload.metric,
-      state.historyMeasurement.unit = payload.unit,
-      state.historyMeasurement.sensor_id = payload.sensor_id,
-      state.historyMeasurement.host_name = payload.host_name
+        state.historyMeasurement.platform = payload.platform,
+        state.historyMeasurement.metric = payload.metric,
+        state.historyMeasurement.unit = payload.unit,
+        state.historyMeasurement.sensor_id = payload.sensor_id,
+        state.historyMeasurement.host_name = payload.host_name
     },
 
     setHistoryMeasurementValues: (state, payload) => {
       state.historyMeasurement.measurements = payload.measurements,
-      state.historyMeasurement.complex_measurements = payload.complex_measurements
-    }
+        state.historyMeasurement.complex_measurements = payload.complex_measurements
+    },
 
+    setCompositeMeasure: (state, payload) => {
+      state.complexMeasurements = payload
+
+    },
   },
   actions: {
     doLogin({ commit }, loginData) {
       axios.post('https://auth-prodd.herokuapp.com/users/login/', {
         ...loginData
       })
-      .then((response) => {
-        const token = response.data.token
-        const login = response.data.login
-        localStorage.setItem('token', token)
-        axios.defaults.headers.common['Authorization'] = token
-        commit('auth_success', token, login)
-        router.push('/');
-        //resolve(response)
-        console.log(response)
-      })
-      .catch(error => {
-        const errorMessage = error.response.data.message
-        commit('auth_error', errorMessage)
-        localStorage.removeItem('token')
-      })
+        .then((response) => {
+          const token = response.data.token
+          const login = response.data.login
+          localStorage.setItem('token', token)
+          axios.defaults.headers.common['Authorization'] = token
+          commit('auth_success', token, login)
+          router.push('/');
+          //resolve(response)
+          console.log(response.data.token)
+        })
+        .catch(error => {
+          const errorMessage = error.response.data.message
+          commit('auth_error', errorMessage)
+          localStorage.removeItem('token')
+        })
     },
     doRegister({ commit }, registerData) {
       axios.post('https://auth-prodd.herokuapp.com/users/register', {
         ...registerData
       })
-      .then((response) => {
-        const token = response.data.token
-        const login = response.data.login
-        const status = response.data.status
-        localStorage.setItem('token', token)
-        axios.defaults.headers.common['Authorization'] = token
-        commit('auth_success', token, login)
-        console.log(login)
-        router.push('/login');cg
-        console.log(status)
-      })
-      .catch((error) => {
-        const errorMessage = error.response.data.message
-        commit('auth_error', errorMessage)
-        localStorage.removeItem('token')
-      })
-    },
-    logout({commit}){
-      return new Promise((resolve, reject) => {
-          commit('logout')
+        .then((response) => {
+          const token = response.data.token
+          const login = response.data.login
+          const status = response.data.status
+          localStorage.setItem('token', token)
+          axios.defaults.headers.common['Authorization'] = token
+          commit('auth_success', token, login)
+          console.log(login)
+          router.push('/login');
+        })
+        .catch((error) => {
+          const errorMessage = error.response.data.message
+          commit('auth_error', errorMessage)
           localStorage.removeItem('token')
-          delete axios.defaults.headers.common['Authorization']
-          resolve();
+        })
+    },
+    logout({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit('logout')
+        localStorage.removeItem('token')
+        delete axios.defaults.headers.common['Authorization']
+        resolve();
       })
     },
     fetchMeasurements: (context, payload) => {
@@ -207,27 +212,54 @@ export default new Vuex.Store({
             response: response
           }
           context.commit("setMeasurmentsData", responseData);
+          console.log(responseData)
         })
         .catch(error => {
           console.log(error)
         })
     },
 
-    saveNewCompositeMeasure: (context, payload) => {
+    /*saveNewCompositeMeasure: (context, payload) => {
       const url = "/measurements"
-
-      console.log(payload)
+      AxiosModule.post(url,payload)
+      .then(response => {
+          var responseData = {
+            complex_measurement_id: payload.complex_measurement_id,
+            response: response
+          }
+          context.commit("setCompositeMeasure", responseData);
+          console.log(responseData)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },*/
+    saveNewCompositeMeasure: (context, payload) => {
+      const url = "/measurements?sensorId=" + payload.sensor_id + "&timeWindow=" + payload.time_window + "&calculationFrequency=" + payload.calculation_frequency + "&token=" + payload.token
+      AxiosModule.post(url, payload)
+        .then(response => {
+          var responseData = {
+            complex_measurement_id: response.complex_measurement_id,
+            response: response
+          }
+          context.commit("setCompositeMeasure", responseData);
+          console.log(responseData)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
-
+    //https://monitor-prodd.herokuapp.com/measurements?sensorId=test&timeWindow=5&calculationFrequency=1&token=eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTk3NTU5NjcsInN1YiI6IkFuaWEiLCJpc3MiOiJwejUiLCJleHAiOjE1NTk3NTY1Njd9.DlEslSc-InMXmG6kTatBv6Mkok15jITBftRISzVU794
+    // + payload.sensor_id + "?limit=" + context.state.limit
     fetchHistoryMeasurements: (context, payload) => {
-      const url = "/measurements/"+payload.sensor_id
-      +"?data_count="+payload.data_count
-      +"&since="+payload.since
-      +"&to="+payload.to
+      const url = "/measurements/" + payload.sensor_id
+        + "?data_count=" + payload.data_count
+        + "&since=" + payload.since
+        + "&to=" + payload.to
 
       AxiosModule.get("/measurements")
         .then(response => {
-          context.commit("setHistoryMeasurementInfo",response.find(s => s.sensor_id == payload.sensor_id))
+          context.commit("setHistoryMeasurementInfo", response.find(s => s.sensor_id == payload.sensor_id))
         })
         .catch(error => {
           console.log(error)
@@ -235,11 +267,11 @@ export default new Vuex.Store({
 
       AxiosModule.get(url)
         .then(response => {
-          context.commit("setHistoryMeasurementValues",response)
+          context.commit("setHistoryMeasurementValues", response)
         })
         .catch(error => {
           console.log(error)
         })
     }
-  },
+  }
 });
