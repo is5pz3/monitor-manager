@@ -11,8 +11,13 @@ export default new Vuex.Store({
     status: '',
     token: localStorage.getItem('token') || '',
     login: {},
-    errorMessage: null,
+    errorMessageLogin: null,
+    errorMessageRegister: null,
+    errorMessageCreateComposite: null,
     complexMeasurements: null,
+    errorMessageDeleteComposite: null,
+    deleteMessage: null,
+    addMessage: null,
     colors: [
       {
         metricName: "CpuUsage",
@@ -96,14 +101,32 @@ export default new Vuex.Store({
       state.token = token
       state.login = login
     },
+    delete_message(state,message) {
+      state.status = 'success'
+      state.deleteMessage = message
+      state.login = login
+    },
+    add_message(state){
+      state.status = 'success',
+      state.addMessage = 'Message'
+    },
     auth_error(state, errorMessage) {
       state.status = 'error',
-        state.errorMessage = errorMessage
+      state.errorMessageLogin = errorMessage
+    },
+    register_error(state, errorMessage) {
+      state.status = 'error',
+      state.errorMessageRegister = errorMessage
     },
     composite_measure_error(state,errorMessage){
       state.status = 'error',
-      state.errorMessage = errorMessage
+      state.errorMessageCreateComposite = errorMessage
     },
+    composite_delete_measure_error(state,errorMessage){
+      state.status = 'error',
+      state.errorMessageDeleteComposite = errorMessage
+    },
+    
     logout(state){
       state.status = ''
       state.token = ''
@@ -183,7 +206,7 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           const errorMessage = error.response.data.message
-          commit('auth_error', errorMessage)
+          commit('register_error', errorMessage)
           localStorage.removeItem('token')
         })
     },
@@ -246,6 +269,7 @@ export default new Vuex.Store({
             response: response
           }
           context.commit("setCompositeMeasure", responseData);
+          context.commit("add_message");
           console.log(responseData)
         })
         .catch(error => {
@@ -254,8 +278,24 @@ export default new Vuex.Store({
           console.log(error)
         })
     },
-    //https://monitor-prodd.herokuapp.com/measurements?sensorId=test&timeWindow=5&calculationFrequency=1&token=eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTk3NTU5NjcsInN1YiI6IkFuaWEiLCJpc3MiOiJwejUiLCJleHAiOjE1NTk3NTY1Njd9.DlEslSc-InMXmG6kTatBv6Mkok15jITBftRISzVU794
-    // + payload.sensor_id + "?limit=" + context.state.limit
+    deleteCompositeMeasure: (context, payload) => {
+      const url = "/measurements/"+payload.sensor_id  + "?token=" + payload.token
+      AxiosModule.delete(url)
+        .then(response => {
+          var responseData = {
+            complex_measurement_id: response.complex_measurement_id,
+            response: response
+          }
+          context.commit("delete_message", responseData);
+          console.log(responseData)
+        })
+        .catch(error => {
+          const errorMessage = error.response.data.message
+          context.commit('composite_delete_measure_error', errorMessage)
+          console.log(error)
+        })
+    },
+
     fetchHistoryMeasurements: (context, payload) => {
       const url = "/measurements/" + payload.sensor_id
         + "?data_count=" + payload.data_count

@@ -2,14 +2,14 @@
   <div>
     <v-dialog v-model="dialog" max-width="600px">
       <template v-slot:activator="{ on }">
-        <v-btn color="green" @click="dialog=true" dark>Add
-        <v-icon dark right>add_circle</v-icon>
+          <v-btn color="red" @click="dialog=true" dark>Delete
+        <v-icon dark right>remove_circle</v-icon>
       </v-btn>
       </template>
 
       <v-card color="white" hide-overlay>
         <v-toolbar dark color="primary">
-          <v-toolbar-title>Add New Composite Measure</v-toolbar-title>
+          <v-toolbar-title>Delete Composite Measure</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon dark @click="dialog = false">
             <v-icon>close</v-icon>
@@ -20,31 +20,20 @@
           <v-flex>
             <v-select v-model="selectedSensor" :items="getAllSensors" label="Select Sensor"></v-select>
           </v-flex>
-
-          <v-flex>
-            <v-subheader class="pl-0">Last</v-subheader>
-            <v-slider v-model="lastMinute" thumb-label="always"></v-slider>
-          </v-flex>
-
-          <v-flex>
-            <v-subheader class="pl-0">Every</v-subheader>
-            <v-slider v-model="everyMinute" thumb-label="always"></v-slider>
-          </v-flex>
-
         </v-layout>
           <v-alert
-          :value="errorMessageCreateComposite"
+          :value="errorMessageDeleteComposite"
           color="error"
           icon="warning"
           outline
-        >{{errorMessageCreateComposite}}</v-alert>
-        <v-alert
-          :value="addMessage"
+        >{{errorMessageDeleteComposite}}</v-alert>
+         <v-alert
+          :value="deleteMessage"
           type="success"
           outline
-        >Composite measure was created</v-alert>
+        >Composite measure was deleted</v-alert>
         <v-divider></v-divider>
-        <v-btn @click="addNewCompositeMeasure" flat color="primary">Save</v-btn>
+        <v-btn @click="deleteNewCompositeMeasure" flat color="primary">Delete</v-btn>
         <v-btn @click="dialog = false" flat>Cancel</v-btn>
 
       </v-card>
@@ -59,8 +48,6 @@ export default {
   data() {
     return {
       dialog: false,
-      lastMinute: 5,
-      everyMinute: 1,
       selectedSensor: ''
     };
   },
@@ -69,19 +56,17 @@ export default {
       getAllSensors: "getAllSensors",
       getToken: "getToken"
     }),
-    ...mapState(["errorMessageCreateComposite","addMessage"]),
+    ...mapState(["errorMessageDeleteComposite","deleteMessage"]),
   },
 
   methods: {
-    addNewCompositeMeasure(){
+    deleteNewCompositeMeasure(){
       var payload = {
         sensor_id: this.selectedSensor,
-        time_window: this.lastMinute,
-        calculation_frequency: this.everyMinute,
         token: this.getToken
       }
 
-      this.$store.dispatch("saveNewCompositeMeasure", payload);
+      this.$store.dispatch("deleteCompositeMeasure", payload);
       //this.dialog = false;
     }
   }

@@ -9,11 +9,10 @@
         <v-flex md1>
           <v-btn flat>View</v-btn>
         </v-flex>
-
+          
         <v-flex md1>
-          <v-btn flat>Delete</v-btn>
+          <DeleteCompositeDialog />
         </v-flex>
-
         <v-flex md1>
           <AddCompositeDialog />
         </v-flex>
@@ -24,10 +23,11 @@
 
 <script>
 import AddCompositeDialog from "@/components/AddCompositeDialog.vue"
-
+import DeleteCompositeDialog from "@/components/DeleteCompositeDialog.vue"
 export default {
   components:{
-    AddCompositeDialog
+    AddCompositeDialog,
+    DeleteCompositeDialog,
   }
 };
 </script>
