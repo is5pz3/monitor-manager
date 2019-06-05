@@ -54,7 +54,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getAllSensors: "getAllSensors"
+      getAllSensors: "getAllSensors",
+      getToken: "getToken"
     })
   },
 
@@ -64,7 +65,7 @@ export default {
         sensor_id: this.selectedSensor,
         time_window: this.lastMinute,
         calculation_frequency: this.everyMinute,
-        token: "//TODO-gettter-token"
+        token: this.getToken
       }
 
       this.$store.dispatch("saveNewCompositeMeasure", payload)

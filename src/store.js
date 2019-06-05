@@ -144,6 +144,7 @@ export default new Vuex.Store({
     token: localStorage.getItem('token') || '',
     login : {},
     errorMessage: null,
+    complexMeasurements: null,
     colors: [
       {
         metricName: "CpuUsage",
@@ -237,8 +238,10 @@ export default new Vuex.Store({
       if (sensorIndex > -1) {
         Vue.set(state.measurements[sensorIndex], 'data', payload.response)
       }
-    }
-
+    },
+    setCompositeMeasure: (state, payload) => {
+        state.complexMeasurements = payload
+      }
   },
   actions: {
     doLogin({ commit }, loginData) {
@@ -253,7 +256,7 @@ export default new Vuex.Store({
         commit('auth_success', token, login)
         router.push('/');
         //resolve(response)
-        console.log(response)
+        console.log(response.data.token)
       })
       .catch(error => {
         const errorMessage = error.response.data.message
@@ -273,8 +276,7 @@ export default new Vuex.Store({
         axios.defaults.headers.common['Authorization'] = token
         commit('auth_success', token, login)
         console.log(login)
-        router.push('/login');cg
-        console.log(status)
+        router.push('/login');
       })
       .catch((error) => {
         const errorMessage = error.response.data.message
@@ -311,18 +313,45 @@ export default new Vuex.Store({
             response: response
           }
           context.commit("setMeasurmentsData", responseData);
+          console.log(responseData)
         })
         .catch(error => {
           console.log(error)
         })
     },
 
-    saveNewCompositeMeasure: (context, payload) => {
+    /*saveNewCompositeMeasure: (context, payload) => {
       const url = "/measurements"
-
-      console.log(payload)
+      AxiosModule.post(url,payload)
+      .then(response => {
+          var responseData = {
+            complex_measurement_id: payload.complex_measurement_id,
+            response: response
+          }
+          context.commit("setCompositeMeasure", responseData);
+          console.log(responseData)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },*/
+    saveNewCompositeMeasure: (context, payload) => {
+      const url = "/measurements?sensorId="+payload.sensor_id+"&timeWindow="+payload.time_window+"&calculationFrequency="+payload.calculation_frequency+"&token="+payload.token
+      AxiosModule.post(url,payload)
+      .then(response => {
+          var responseData = {
+            complex_measurement_id: response.complex_measurement_id,
+            response: response
+          }
+          context.commit("setCompositeMeasure", responseData);
+          console.log(responseData)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
-
+    //https://monitor-prodd.herokuapp.com/measurements?sensorId=test&timeWindow=5&calculationFrequency=1&token=eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTk3NTU5NjcsInN1YiI6IkFuaWEiLCJpc3MiOiJwejUiLCJleHAiOjE1NTk3NTY1Njd9.DlEslSc-InMXmG6kTatBv6Mkok15jITBftRISzVU794
+   // + payload.sensor_id + "?limit=" + context.state.limit
     fetchHistoryMeasurements: (context, payload) => {
       const url = "/measurements/"+payload.sensor_id
       +"?data_count="+payload.data_count
