@@ -34,8 +34,6 @@ export default {
       logged: false,
       buttons: [
         { title: "Dashboard", icon: "dashboard", route: "/" },
-        { title: "Search", icon: "search", route: "/search" },
-        { title: "Charts", icon: "insert_chart_outlined", route: "/charts" },
         { title: "Composite Measure", icon: "create", route: "/composite" },
         { title: "History", icon: "history", route: "/history" }
       ]

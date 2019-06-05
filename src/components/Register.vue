@@ -28,11 +28,11 @@
         ></v-text-field>
         <v-alert
           class="mx-5"
-          :value="errorMessage"
+          :value="errorMessageRegister"
           color="error"
           icon="warning"
           outline
-        >{{errorMessage}}</v-alert>
+        >{{errorMessageRegister}}</v-alert>
         <v-flex text-xs-right class="mx-5 pa-5">
           <v-btn color="primary" flat :disabled="passwordMatchErrorFlag" @click="register()">Sign Up</v-btn>
           <v-btn to="/login" flat>Cancel</v-btn>
@@ -57,7 +57,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["errorMessage"]),
+    ...mapState(["errorMessageRegister"]),
     passwordMatchError() {
       return this.password === this.confirmPassword
         ? ""

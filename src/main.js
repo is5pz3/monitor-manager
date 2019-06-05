@@ -6,7 +6,7 @@ import store from './store';
 import axios from 'axios';
 
 Vue.config.productionTip = false;
-axios.defaults.baseURL = 'https://monitor-prodd.herokuapp.com/';
+axios.defaults.baseURL = 'https://api-gateway-prod.herokuapp.com/';
 
 new Vue({
   router,
