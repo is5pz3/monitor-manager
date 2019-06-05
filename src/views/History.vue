@@ -6,12 +6,7 @@
           <v-select v-model="selectedSensor" :items="getAllSensors" label="Select Sensor"></v-select>
         </v-flex>
         <v-flex md2 class="pa-3">
-                    <v-text-field
-            label="Data count"
-            outline
-            mask="#####"
-            v-model="data_count"
-          ></v-text-field>
+          <v-text-field label="Data count" outline mask="#####" v-model="data_count"></v-text-field>
         </v-flex>
 
         <v-container md12 class="pa-3">
@@ -154,12 +149,23 @@
         </v-layout>
       </v-layout>
     </v-card>
+    <br>
+    <v-layout column align-center justify-center>
+      <v-flex md12 v-if="getHistoryMeasure.sensor_id">
+        <HistorySensor :sensor="getHistoryMeasure"/>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import HistorySensor from "@/components/sensors/HistorySensor.vue";
+
 export default {
+  components: {
+    HistorySensor
+  },
   data() {
     return {
       menu: [false, false, false, false],
@@ -168,14 +174,15 @@ export default {
       toDate: null,
       toTime: null,
       selectedSensor: null,
-      data_count: null,
+      data_count: 20,
       isError: false,
       msg: ""
     };
   },
   computed: {
     ...mapGetters({
-      getAllSensors: "getAllSensors"
+      getAllSensors: "getAllSensors",
+      getHistoryMeasure: "getHistoryMeasure"
     })
   },
 
@@ -219,13 +226,21 @@ export default {
           data_count: this.data_count,
           since: from,
           to: to
-        }
-        this.$store.dispatch("fetchHistoryMeasurements",payload)
+        };
+        this.$store.dispatch("fetchHistoryMeasurements", payload);
       } else {
         this.msg = "Bad time window";
         this.isError = true;
       }
+    },
+    fetchMeasurementsData() {
+      this.getMeasurements.forEach(element => {
+        this.$store.dispatch("fetchMeasurementsData", element);
+      });
     }
+  },
+  created() {
+    this.$store.dispatch("fetchMeasurements");
   }
 };
 </script>
