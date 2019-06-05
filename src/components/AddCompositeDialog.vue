@@ -2,7 +2,8 @@
   <div>
     <v-dialog v-model="dialog" max-width="600px">
       <template v-slot:activator="{ on }">
-        <v-btn @click="dialog=true" color="primary" flat>Add
+        <v-btn @click="dialog=true" color="primary" flat>
+          Add
           <v-icon right>add_circle_outline</v-icon>
         </v-btn>
       </template>
@@ -30,8 +31,14 @@
             <v-subheader class="pl-0">Every</v-subheader>
             <v-slider v-model="everyMinute" thumb-label="always"></v-slider>
           </v-flex>
-
         </v-layout>
+        <v-alert
+          :value="errorMessageCreateComposite"
+          color="error"
+          icon="warning"
+          outline
+        >{{errorMessageCreateComposite}}</v-alert>
+        <v-alert :value="addMessage" type="success" outline>Composite measure was created</v-alert>
         <v-divider></v-divider>
         <v-btn @click="addNewCompositeMeasure" flat color="primary">Save</v-btn>
         <v-btn @click="dialog = false" flat>Cancel</v-btn>
@@ -41,7 +48,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   data() {
@@ -49,26 +57,27 @@ export default {
       dialog: false,
       lastMinute: 5,
       everyMinute: 1,
-      selectedSensor: ''
+      selectedSensor: ""
     };
   },
   computed: {
     ...mapGetters({
       getAllSensors: "getAllSensors",
       getToken: "getToken"
-    })
+    }),
+    ...mapState(["errorMessageCreateComposite", "addMessage"])
   },
 
   methods: {
-    addNewCompositeMeasure(){
+    addNewCompositeMeasure() {
       var payload = {
         sensor_id: this.selectedSensor,
         time_window: this.lastMinute,
         calculation_frequency: this.everyMinute,
         token: this.getToken
-      }
-      this.$store.dispatch("saveNewCompositeMeasure", payload)
-      this.dialog = false
+      };
+      this.$store.dispatch("saveNewCompositeMeasure", payload);
+      // this.dialog = false;
     }
   }
 };
