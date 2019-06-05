@@ -20,11 +20,11 @@
         ></v-text-field>
         <v-alert
           class="mx-5"
-          :value="errorMessage"
+          :value="errorMessageLogin"
           color="error"
           icon="warning"
           outline
-        >{{errorMessage}}</v-alert>
+        >{{errorMessageLogin}}</v-alert>
         <v-flex text-xs-right class="mx-5 pa-5">
           <v-btn flat color="primary" @click="loginSubmit()">Log In</v-btn>
           <v-btn flat to="/register">Sign up</v-btn>
@@ -49,7 +49,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["errorMessage"])
+    ...mapState(["errorMessageLogin"])
   },
   methods: {
     ...mapActions(["doLogin"]),

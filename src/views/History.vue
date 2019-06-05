@@ -233,11 +233,6 @@ export default {
         this.isError = true;
       }
     },
-    fetchMeasurementsData() {
-      this.getMeasurements.forEach(element => {
-        this.$store.dispatch("fetchMeasurementsData", element);
-      });
-    }
   },
   created() {
     this.$store.dispatch("fetchMeasurements");
