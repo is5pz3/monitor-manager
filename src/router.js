@@ -2,8 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import store from './store'
 import Dashboard from '@/views/Dashboard.vue';
-import Search from '@/views/Search.vue';
-import Charts from '@/views/Charts.vue';
 import Composite from '@/views/Composite.vue';
 import History from '@/views/History.vue';
 import Login from '@/components/Login.vue';
@@ -19,16 +17,6 @@ let router = new Router({
       path: '/',
       name: 'dashboard',
       component: Dashboard
-    },
-    {
-      path: '/search',
-      name: 'search',
-      component: Search
-    },
-    {
-      path: '/charts',
-      name: 'charts',
-      component: Charts
     },
     {
       path: '/composite',

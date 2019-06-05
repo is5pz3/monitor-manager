@@ -67,7 +67,6 @@ export default {
         calculation_frequency: this.everyMinute,
         token: this.getToken
       }
-
       this.$store.dispatch("saveNewCompositeMeasure", payload)
     }
   }

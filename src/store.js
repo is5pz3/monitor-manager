@@ -212,7 +212,6 @@ export default new Vuex.Store({
             response: response
           }
           context.commit("setMeasurmentsData", responseData);
-          console.log(responseData)
         })
         .catch(error => {
           console.log(error)
